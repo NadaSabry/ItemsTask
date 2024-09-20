@@ -9,75 +9,64 @@
 <p>
     <a asp-action="Add">Create New Item</a>
 </p>
-<table class="table">
+@using (Html.BeginForm("EditPrices", "Item", FormMethod.Post))
+{
+   <table class="table">
     <tbody>
         <tr>
-            <th>
-                Item Name
-            </th>
+            <th>Item Name</th>
             @foreach (var item in Model.Items)
             {
                 <td>@Html.DisplayFor(model => item.ItemName)</td>
             }
         </tr>
-
         <tr>
-            <th>
-                Brand
-            </th>
+            <th>Brand</th>
             @foreach (var item in Model.Items)
             {
                 <td>@Html.DisplayFor(model => item.Brand)</td>
             }
         </tr>
         <tr>
-            <th>
-                Model
-            </th>
+            <th>Model</th>
             @foreach (var item in Model.Items)
             {
                 <td>@Html.DisplayFor(model => item.model)</td>
             }
         </tr>
         <tr>
-            <th>
-               Color
-            </th>
+            <th>Color</th>
             @foreach (var item in Model.Items)
             {
                 <td>@Html.DisplayFor(model => item.Color)</td>
             }
         </tr>
         <tr>
-            <th>
-                Price
-            </th>
-            @foreach (var item in Model.Items)
-            {
-                <td>
-                    <form class="d-flex flex-row" method="post" asp-action="EditPrice">
-                        <div class="form-group w-50">
-                            <input asp-for="Price" value="@item.Price" class="form-control" />
-                            <span asp-validation-for="@item.Price" class="text-danger"></span>
-                        </div>
-
-                        <input type="hidden" asp-for="ItemID" value="@item.ItemID" />
-
-                        <input type="submit" class="btn btn-outline-primary mx-1" value="Save" />
-                    </form>
-                </td>
-            }
+            <th>Price</th>
+                @for(int i=0;i< Model.Items.Count();i++)
+                {
+                    @Html.HiddenFor(m => m.Items[i].ItemID)
+                    @Html.HiddenFor(m => m.Index)
+                    <td>
+                            <div class="form-group w-50">
+                                @Html.TextBoxFor(m => m.Items[i].Price, new { @class = "form-control" })
+                            </div>
+                    </td>
+                }
     </tbody>
 </table>
+   <input type="submit" value="save" class="btn btn-primary" />
+}
+
 
 <div class="d-flex justify-content-between">
     <div>
-        <a class="btn @(ViewBag.Index == 0 ? "disabled text-secondary" : "")" asp-action="Index" asp-route-id="@(ViewBag.Index-1)"> <i class="fa-solid fa-arrow-left fa-3x"></i> </a>
+        <a class="btn @(Model.Index == 0 ? "disabled text-secondary" : "")" asp-action="Index" asp-route-id="@(Model.Index-1)"> <i class="fa-solid fa-arrow-left fa-3x"></i> </a>
     </div>
     <div>
-        <a class="btn @((ViewBag.Index+1) * 3 >= ViewBag.ItemCount ? "disabled text-secondary" : "")" asp-action="Index" asp-route-id="@(ViewBag.Index+1)"> <i class="fa-solid fa-arrow-right fa-3x"></i> </a> 
+        <a class="btn @((Model.Index+1) * 3 >= ViewBag.ItemCount ? "disabled text-secondary" : "")" asp-action="Index" asp-route-id="@(Model.Index+1)"> <i class="fa-solid fa-arrow-right fa-3x"></i> </a>
     </div>
 </div>
 
-<p>Page No. : [ @(ViewBag.Index + 1) - @(ViewBag.ItemCount / 3 + (ViewBag.ItemCount % 3 > 0 ? 1 : 0)) ]</p>
+<p>Page No. : [ @(Model.Index + 1) - @(ViewBag.ItemCount / 3 + (ViewBag.ItemCount % 3 > 0 ? 1 : 0)) ]</p>
 <p>No. Items : @ViewBag.ItemCount</p>

@@ -12,7 +12,6 @@ namespace GlobalgeobitsTask.Controllers
         {
             _context = context;
         }
-
         [HttpGet]
         public IActionResult Index(int Id = 0)
         {
@@ -21,7 +20,8 @@ namespace GlobalgeobitsTask.Controllers
             int skip = size * Id;
 
             viewModel.Items = _context.Items.Skip(skip).Take(size).ToList();
-            ViewBag.Index = Id;
+            viewModel.Index = Id;
+            
             ViewBag.ItemCount = _context.Items.Count();
 
             return View(viewModel);
@@ -62,20 +62,22 @@ namespace GlobalgeobitsTask.Controllers
             }
             return NotFound();
         }
-
         [HttpPost]
-        public IActionResult EditPrice(int ItemID, decimal Price)
+        public ActionResult EditPrices(List<Item> items,int Index)
         {
-            var itemToUpdate = _context.Items.FirstOrDefault(i => i.ItemID == ItemID);
+                foreach (var updatedItem in items)
+                {
+                    var itemToUpdate = _context.Items.FirstOrDefault(i => i.ItemID == updatedItem.ItemID);
 
-            if (itemToUpdate != null)
-            {
-                itemToUpdate.Price = Price;
-                _context.Update(itemToUpdate);
+                    if (itemToUpdate != null)
+                    {
+                        itemToUpdate.Price = updatedItem.Price;
+                    }
+                }
                 _context.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return NotFound();
+            return RedirectToAction("Index", new { Id = Index });
+
         }
     }
+
 }
